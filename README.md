@@ -7,7 +7,7 @@ The simplest way to start is to use the annotation `@SpringContainerTestDatabase
 container attribute that exposes a JDBC connection:
 ```java
 @Container
-static PostgreSQLContainer container = new PostgreSQLContainer("postgres");
+static MySQLContainer container = new MySQLContainer("mysql");
 ```
 and another one that will setup the Spring context:
 ```java

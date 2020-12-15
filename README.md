@@ -62,6 +62,30 @@ class TestMySQL {
   }
 }
 ```
+# Maven
+In your pom.xml:
+```
+<repositories>
+    <repository>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/paulbares/spring-testcontainer</url>
+    </repository>
+</repositories>
+```
+
+Due to Github packages limitation (you need to authenticate to download both public and private packages), add this to your settings.xml:
+```
+<servers>
+	<server>
+		<id>github</id>
+		<username>USERNAME</username>
+		<password>TOKEN</password>
+	</server>
+</servers>
+```
+replacing `USERNAME` with your GitHub username, and `TOKEN` with your personal access token. [More here](https://docs.github.com/en/free-pro-team@latest/packages/guides/configuring-apache-maven-for-use-with-github-packages#authenticating-to-github-packages).
+
+`servers.server.id` must be the same value than `repositories.repository.id`.
 # Important
 Per test class, only one field annotated with `@Container` is expected and this field must be static meaning only one docker 
 container will be started for all the tests within this class. 

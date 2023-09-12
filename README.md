@@ -9,12 +9,16 @@ container attribute that exposes a JDBC connection:
 @Container
 static MySQLContainer container = new MySQLContainer("mysql");
 ```
-and another one that will setup the Spring context:
-```java
-@AnnotationContextCustomizer
-static ContextCustomizer customizer = new JdbcDbContainerContextCustomizer(container);
-```
+
 The lifecycle of the container is managed by the Testcontainer library itself. 
+
+Edit or create the file `spring.factories` to add:
+```
+org.springframework.test.context.ContextCustomizerFactory=\
+me.paulbares.InjectableContextCustomizerFactory
+```
+
+The `InjectableContextCustomizerFactory` is responsible to set the appropriate jdbc properties in the Spring context. 
 
 Don't forget to add as dependencies the Testcontainers library of the db you want to use and the associated JDBC driver library, 
 for instance for MySQL:
@@ -22,7 +26,7 @@ for instance for MySQL:
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>mysql</artifactId>
-    <version>1.15.0</version>
+    <version>1.19.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -31,7 +35,7 @@ Driver dependency:
 <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
-    <version>8.0.22</version>
+    <version>8.0.33</version>
 </dependency>
 ```
 If you want to customize the properties datasource, you can extend and override `JdbcDbContainerContextCustomizer#getProperties`.
@@ -45,9 +49,6 @@ class TestMySQL {
 
   @Container
   static MySQLContainer container = new MySQLContainer("mysql");
-
-  @AnnotationContextCustomizer
-  static ContextCustomizer customizer = new JdbcDbContainerContextCustomizer(container);
 
   @Autowired
   CustomerRepository customerRepository;
@@ -69,14 +70,12 @@ To add a dependency on spring-testcontainer using Maven, use the following:
 <dependency>
     <groupId>me.paulbares</groupId>
     <artifactId>spring-testcontainer</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 # Important
 Per test class, only one field annotated with `@Container` is expected and this field must be static meaning only one docker 
 container will be started for all the tests within this class. 
-DON'T FORGET to add a `ContextCustomizer` to your class otherwise your datasource will be misconfigured and Spring will fall
-back to an embedded in-memory H2 database.
 
 # FAQ
 - How can I check my test is correctly setup?
